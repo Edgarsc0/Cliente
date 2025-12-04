@@ -52,9 +52,10 @@ const App = () => {
 
         const humedadRelativa = 20 * volts;
         const voltajeSensor = (3.3 / 100) * humedadRelativa;
+        const voltajeCAS = (1 / 20 * humedadRelativa).toFixed(2);
 
         // Actualizamos todos los estados con los nuevos valores
-        setValorADC(adcValue);
+        setValorADC(voltajeCAS);
         setVoltajeSensor(voltajeSensor);
         setHumedad(humedadRelativa);
 
@@ -125,7 +126,7 @@ const App = () => {
           <div className={`w-3 h-3 text-center rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
           Conexion al servidor: {getStatusText()}
         </div>
-        <h1 className="text-2xl font-bold text-slate-800 text-center mb-2">Monitor de Humedad</h1>        
+        <h1 className="text-2xl font-bold text-slate-800 text-center mb-2">Monitor de Humedad</h1>
         <p className="text-sm text-slate-500 text-center mb-6">Sensor: HMZ-433a1</p>
 
         <div className="grid grid-cols-2 gap-6 items-center">
