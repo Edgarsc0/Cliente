@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 
 
@@ -13,6 +13,13 @@ const App = () => {
   const [showDisconnectionModal, setShowDisconnectionModal] = useState(false);
   const dataTimeoutRef = useRef(null);
 
+  // Función para manejar la interrupción de datos y reiniciar el temporizador.
+  const handleDataTimeout = () => {
+    toast.error('Se ha interrumpido la recepción de datos.');
+    setIsConnected(false);
+    setShowDisconnectionModal(true);
+  };
+
   useEffect(() => {
     // 1. Creamos una nueva instancia del cliente WebSocket.
     // Se conectará al servidor que ya tienes en `ws://localhost:8080`.
@@ -25,9 +32,7 @@ const App = () => {
       toast.success('Conectado al servidor correctamente.');
 
       // Inicia un temporizador. Si no se reciben datos en 10s, muestra una advertencia.
-      dataTimeoutRef.current = setTimeout(() => {
-        toast.error('No se están recibiendo datos del sensor.');
-      }, 10000); // 10 segundos de espera
+      dataTimeoutRef.current = setTimeout(handleDataTimeout, 10000); // 10 segundos de espera
     };
 
     // 3. Evento principal: se dispara cuando se recibe un mensaje del servidor.
@@ -54,9 +59,7 @@ const App = () => {
         setHumedad(humedadRelativa);
 
         // Reinicia el temporizador para la próxima advertencia.
-        dataTimeoutRef.current = setTimeout(() => {
-          toast.error('Se ha interrumpido la recepción de datos.');
-        }, 10000);
+        dataTimeoutRef.current = setTimeout(handleDataTimeout, 10000);
       } catch (error) {
         console.error("Error al procesar el mensaje del WebSocket:", error);
       }
@@ -118,9 +121,9 @@ const App = () => {
 
       <div className="max-w-md w-full bg-white rounded-2xl shadow-lg p-6 relative">
         {/* Indicador de Conexión */}
-        <div className={`absolute top-4 right-4 flex items-center gap-2 text-xs font-semibold ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
-          <div className={`w-3 h-3 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-          {getStatusText()}
+        <div className={`my-2 flex items-center justify-center gap-2 text-xs font-semibold ${isConnected ? 'text-green-600' : 'text-red-600'}`}>
+          <div className={`w-3 h-3 text-center rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+          Conexion al servidor: {getStatusText()}
         </div>
         <h1 className="text-2xl font-bold text-slate-800 text-center mb-2">Monitor de Humedad</h1>        
         <p className="text-sm text-slate-500 text-center mb-6">Sensor: HMZ-433a1</p>
